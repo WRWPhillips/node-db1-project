@@ -1,23 +1,24 @@
 const db = require('../data/dbconfig.js');
 
 const getAll = () => {
-  return db(table);
+  return db('accounts');
 }
 
 const getById = id => {
-  return db(table).where({ id: id });
+  return db('accounts').where({ id: id });
 }
 
 const create = account => {
-  db(table).insert({
+  db('accounts').insert({ account });	
+
 }
 
 const updateById = (id, account) => {
-  // DO YOUR MAGIC
+  db('accounts').where({ id: id }).update({ account });
 }
 
 const deleteById = id => {
-  // DO YOUR MAGIC
+  db('accounts').({id: id}).del();
 }
 
 module.exports = {
