@@ -1,13 +1,15 @@
+const db = require('../data/dbconfig.js');
+
 const getAll = () => {
-  // DO YOUR MAGIC
+  return db(table);
 }
 
 const getById = id => {
-  // DO YOUR MAGIC
+  return db(table).where({ id: id });
 }
 
 const create = account => {
-  // DO YOUR MAGIC
+  db(table).insert({
 }
 
 const updateById = (id, account) => {
