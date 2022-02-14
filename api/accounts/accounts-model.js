@@ -1,24 +1,35 @@
 const db = require('../data/dbconfig.js');
 
-const getAll = () => {
+async function getAll(){
   return db('accounts');
 }
 
-const getById = id => {
-  return db('accounts').where({ id: id });
+async function getById(id){
+  return db('accounts').where({ id:  id });
 }
 
-const create = account => {
-  db('accounts').insert({ account });	
-
+async function create({name, budget}) {
+  let [id] = await db('accounts').insert({ name, budget });	
+  return {
+    name,
+    budget,
+    id: id
+  };
 }
 
-const updateById = (id, account) => {
-  db('accounts').where({ id: id }).update({ account });
+async function updateById(id, {name, budget}){
+  await db('accounts').where({ id: id }).update({ name, budget });
+  return {
+    name,
+    budget,
+    id
+  }
 }
 
-const deleteById = id => {
-  db('accounts').({id: id}).del();
+async function deleteById(id){
+  let result = await getById(id);
+  await db('accounts').where({id: id}).del();
+  return result;
 }
 
 module.exports = {
