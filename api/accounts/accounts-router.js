@@ -1,27 +1,58 @@
-const router = require('express').Router()
+const express = require('express');
+const Accounts = require('./accounts-model');
+const { checkAccountPayload, checkAccountNameUnique, checkAccountId } = require('./accounts-middleware');
 
-router.get('/', (req, res, next) => {
-  // DO YOUR MAGIC
-})
+const router = express.Router();
 
-router.get('/:id', (req, res, next) => {
-  // DO YOUR MAGIC
-})
-
-router.post('/', (req, res, next) => {
-  // DO YOUR MAGIC
-})
-
-router.put('/:id', (req, res, next) => {
-  // DO YOUR MAGIC
+router.get('/', async (req, res, next) => {
+  try{
+    const data = await Accounts.getAll();
+    res.json(data)
+  }
+  catch (err) {
+    next(err);
+  }
 });
 
-router.delete('/:id', (req, res, next) => {
-  // DO YOUR MAGIC
+router.get('/:id', checkAccountId, async (req, res, next) => {
+  res.json(req.account);
 })
 
-router.use((err, req, res, next) => { // eslint-disable-line
-  // DO YOUR MAGIC
+router.post('/', checkAccountPayload, checkAccountNameUnique, async (req, res, next) => {
+  try {
+    const data = await Accounts.create({
+      name: req.body.name.trim(),
+      budget: req.body.budget
+    });
+    res.status(201).json(data);
+  } catch (err) {
+    next(err);
+  }
 })
+
+router.put('/:id', checkAccountId, checkAccountPayload, async (req, res, next) => {
+  try {
+    const edited = await Accounts.updateById(req.params.id, req.body);
+    res.json(edited);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete('/:id', checkAccountId, async (req, res, next) => {
+  try{
+    await Accounts.deleteById(req.params.id);
+    res.json(req.account);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.use((err, req, res, next) => { // eslint-disable-line
+  res.status(err.status || 500).json({
+    message: err.message,
+    stack: err.stack
+  });
+});
 
 module.exports = router;

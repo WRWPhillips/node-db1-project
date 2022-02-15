@@ -1,20 +1,19 @@
-const db = require('../data/dbconfig.js');
+const db = require('../../data/db-config');
 
-async function getAll(){
-  return db('accounts');
+function getAll(){
+  return db('accounts')
+    .select('id', 'name', 'budget');
 }
 
-async function getById(id){
-  return db('accounts').where({ id:  id });
+const getById = (id) => {
+  return db('accounts'
+  ).where( 'id', id 
+  ).first();
 }
 
-async function create({name, budget}) {
-  let [id] = await db('accounts').insert({ name, budget });	
-  return {
-    name,
-    budget,
-    id: id
-  };
+async function create(account) {
+  let [id] = await db('accounts').insert(account);	
+  return getById(id);
 }
 
 async function updateById(id, {name, budget}){
